@@ -310,15 +310,22 @@ static void *coalesce(void *bp)
       bp = PREV_BLKP(bp);
    }
 
-   // TODO
-   // A problem that can occur with the next fit policy
-   // is that after coalescing the current pointer points to
-   // the middle of the block pointed to by bp.
-   // Add code that looks for that.  If current points
-   // to the middle of the block then set it to be
-   // equal to bp. (Don't just always set it to be. That is
-   // incorrect.)
-   // Note: current is a global variable
+   /*
+      TODO
+
+      A problem that can occur with the next fit policy
+      is that after coalescing, the current pointer points
+      to the middle of the block pointed to by bp.
+
+      Add code that looks for that.
+
+      If current points to the middle of the block then set
+      it to be equal to bp.
+
+      (Don't just always set it to be. That is incorrect.)
+
+      Note: current is a global variable.
+   */
 
    return bp;
 }
