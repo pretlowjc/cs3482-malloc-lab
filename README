@@ -1,0 +1,67 @@
+#####################################################################
+# Malloc Lab
+# Handout files for students
+######################################################################
+
+***********
+Main Files:
+***********
+
+mmImplicit.{c,h}	
+    This file contains a partial implementation of malloc routines
+    using implicit lists.  You will complete this implementation.
+
+implicitTester.c
+    This code contains test code for the implicit lists implementation.
+    You need to modify this file to provide good tests for next fit,
+    first fit, and best fit. 
+
+mmExplicit.{c,h}	
+    This file contains a partial implementation of malloc routines
+    using explicit lists.  You will complete this implementation.
+
+explicitTester.c
+    This file is provided so that you can use it for testing of your
+    explicit lists implementation. It won't be graded. 
+
+Makefile	
+
+**********************************
+Other support files for the driver
+You don't modify these.
+**********************************
+
+Makefile      Builds the drivers: explicit and implicit
+driver.c      The malloc driver that tests your mmImplicit and mmExplicit files
+config.h      Configures the malloc lab driver
+fsecs.{c,h}   Wrapper function for the different timer packages
+clock.{c,h}   Routines for accessing the Pentium and Alpha cycle counters
+fcyc.{c,h}    Timer functions based on cycle counters
+ftimer.{c,h}  Timer functions based on interval timers and gettimeofday()
+memlib.{c,h}  Models the heap and sbrk function
+makelink.sh   Adds a link from your directory to the traces directory
+
+****************************************
+Building and running the drivers/testers
+****************************************
+To build the testers and drivers, type "make" to the shell.
+
+To run the explicitTester type:
+unix> ./explicitTester 
+or
+unix> ./explicitTester -w first
+
+
+To run the implicitTester type:
+unix> ./implicitTester 
+or
+unix> ./implicitTester -w first
+
+To run the explicit driver that thoroughly tests your implementation: type
+unix> ./explicit
+
+To run the implicit driver that thoroughly tests your implementation: type
+unix> ./implicit
+
+Other options are available.  You can see these by typing:
+unix> ./implicit -h
