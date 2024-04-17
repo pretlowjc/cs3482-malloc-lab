@@ -1,0 +1,7 @@
+----------------------------------------------------
+|first-fit|  |bfit|     <freeable block>   |nxt-fit|         
+----------------------------------------------------
+
+if first, -> first-fit -> bfit
+if best, ->bfit -> nxt-fit
+if next, -> nxt-fit -> first-fit

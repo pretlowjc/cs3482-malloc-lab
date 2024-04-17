@@ -373,43 +373,10 @@ static void *first_fit(size_t asize)
  */
 static void *next_fit(size_t asize)
 {
-
-	// TODO
-	// Replace this statement by an implementation of the next_fit
-	// algorithm.
-	//return first_fit(asize);
-
-    // start at current,
-    //  loop through blocks until end up heap. 
-    //  if a block has size >= asize, return a pointer to that block
-    //
-    //if that doesn't work,
-    // start at the beginning of the heap and repeat above, stopping when we reach current
-    //
-    // if THAT doesn't work, return null
-
-	//
-	// current points to the block after the last block allocated.
-	// Start looking through the blocks starting from there. If you find
-	// a large enough block, return it.
-	//
-	// If you don't find a large enough block in the first loop, then
-	// control should enter your second loop that will start at the
-	// beginning of the heap.  Don't loop all the way to the end; just
-	// go to current in the second loop.
-	//
-	// If you don't find a large enough block in the second loop then
-	// return NULL.
-	//
-	// Don't modify current here.  It is modified by mm_malloc.
-    
-
-
-
     // Set iterptr to current; iterate over blocks until...
     //  One with proper size is found, and address is returned
     //  We reach end of heap
-	void* bp;
+	char* bp;
     for (bp = current; GET_SIZE(HDRP(bp)) > 0; bp = NEXT_BLKP(bp))
 	{
 		if (!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp))))
@@ -422,7 +389,7 @@ static void *next_fit(size_t asize)
     // Set iterptr to the start of the heap, until...
     //  One with proper size is found, and address is returned
     //  We reach current
-	for (bp = heap_listp; bp <= current; bp = NEXT_BLKP(bp))
+	for (bp = heap_listp; bp < current; bp = NEXT_BLKP(bp))
 	{
 		if (!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp))))
 		{
@@ -442,17 +409,29 @@ static void *next_fit(size_t asize)
  */
 static void *best_fit(size_t asize)
 {
-
-	// TODO
-	// Replace this statement by an implementation of the best_fit
-	// algorithm.
-	return first_fit(asize);
-
 	// This code needs to loop through all of the blocks in the
 	// heap and find and return a free one that fits and is the smallest
 	// block among all of the blocks that are free and fit.
 	//
 	// If no block can be found that fits then return NULL.
+    
+    char* bp;
+    char* smallest = NULL;
+    for (bp = heap_listp; GET_SIZE(HDRP(bp)) > 0; bp = NEXT_BLKP(bp))
+	{
+		if (!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp))))
+		{
+            if (smallest == NULL) {
+                smallest = bp;
+                continue;
+            }
+			if (GET_SIZE(smallest) > GET_SIZE(bp)) {
+                smallest = bp;
+            }
+		}
+	}
+    
+    return smallest;
 }
 
 /*

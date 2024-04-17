@@ -22,8 +22,6 @@ void usage();
  */
 int main(int argc, char * argv[])
 {
-   void *bp1, *bp2, *bp3, *bp4;
-
    parseArgs(argc, argv);
    //don't delete these calls. You need these.
    mem_init();
@@ -47,37 +45,50 @@ int main(int argc, char * argv[])
    //i.e., create more blocks with various sizes.
    //Note: you can give yourself easier addresses to work with by always
    //      passing to malloc a size in hex that ends with 8.  
-   printf("Blocks after malloc(0x128), malloc(0x118), malloc(0x178)\n");
-   bp1 = mm_malloc(0x128);
-   bp2 = mm_malloc(0x118);
-   bp3 = mm_malloc(0x178);
+   void *bp1, *bp2, *bp3, *bp4;
+   void *bp_firstfit, *bp_bestfit, *bp_nextfit, *bp_current;
+
+   bp_firstfit = mm_malloc(0x120);
+   bp1 = mm_malloc(0x320);
+   bp_bestfit = mm_malloc(0x100);
+   bp2 = mm_malloc(0x628);
+   bp_current = mm_malloc(0x18);
+   bp3 = mm_malloc(0x320);
+   bp_nextfit = mm_malloc(0x128);
+   // Remaining space on heap = 8
+
+   mm_free(bp_firstfit);
+   mm_free(bp_bestfit);
+   mm_free(bp_nextfit);
+   mm_free(bp_current);
+
    printBlocks();
 
-   //Now free one block so there is a free block between two allocated
-   //blocks.
-   mm_free(bp2);
-   printf("Blocks after free(0x%x)\n", (unsigned int) bp2);
-   printBlocks();
-
-   //Now allocate a block
-   bp4 = mm_malloc(0x38);
-   printf("Blocks after malloc(0x38)\n");
-   printBlocks();
+   bp4 = mm_malloc(0x98);
+    
 
    //firstfit will pick the very first free block that is big enough.
-   //The one pointed to by bp2 is big enough.
+   //The one pointed to by bp_firstfit is big enough.
    //The first parameter to addressCompare contains the address it should be.
    //The second parameter is the address returned by mm_malloc.
-   if (whichfit == FIRSTFIT) addressCompare(bp2, bp4);
+   if (whichfit == FIRSTFIT) addressCompare(bp_firstfit, bp4);
 
    //nextfit will pick the hole after the block pointed to
-   //by bp3.  The size of that block is 0x178 + 8 = 0x180
-   //This one won't work until you get next fit working.
-   if (whichfit == NEXTFIT)  addressCompare(bp3 + 0x180, bp4);
+   //by bp_nextfit. 
+   if (whichfit == NEXTFIT)  addressCompare(bp_nextfit, bp4);
 
    //You'll also need to test best fit
-   //if (whichfit == BESTFIT) addressCompare(..., bp4);
-   //
+   if (whichfit == BESTFIT) addressCompare(bp_bestfit, bp4);
+
+   printBlocks();
+
+   void *bp5;
+   bp5 = mm_malloc(0x98);
+   
+   if (whichfit == FIRSTFIT) addressCompare(bp_bestfit, bp5);
+   if (whichfit == NEXTFIT)  addressCompare(bp_firstfit, bp5);
+   if (whichfit == BESTFIT) addressCompare(bp_nextfit, bp5);
+
    //Now add one more malloc.  This malloc should cause next fit to loop
    //around.  That is, the hole at the bottom won't be big enough.
    //First fit and best fit should also return different values, so
