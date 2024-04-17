@@ -316,8 +316,6 @@ static void *coalesce(void *bp)
 	}
 
 	/*
-	   TODO
-
 	   A problem that can occur with the next fit policy
 	   is that after coalescing, the current pointer points
 	   to the middle of the block pointed to by bp.
@@ -331,6 +329,10 @@ static void *coalesce(void *bp)
 
 	   Note: current is a global variable.
 	*/
+
+    if ((HDRP(bp) < current) && (FTRP(bp) > current)) {
+        current = bp;
+    }
 
 	return bp;
 }
@@ -375,7 +377,17 @@ static void *next_fit(size_t asize)
 	// TODO
 	// Replace this statement by an implementation of the next_fit
 	// algorithm.
-	return first_fit(asize);
+	//return first_fit(asize);
+
+    // start at current,
+    //  loop through blocks until end up heap. 
+    //  if a block has size >= asize, return a pointer to that block
+    //
+    //if that doesn't work,
+    // start at the beginning of the heap and repeat above, stopping when we reach current
+    //
+    // if THAT doesn't work, return null
+
 	//
 	// current points to the block after the last block allocated.
 	// Start looking through the blocks starting from there. If you find
@@ -390,6 +402,37 @@ static void *next_fit(size_t asize)
 	// return NULL.
 	//
 	// Don't modify current here.  It is modified by mm_malloc.
+    
+
+
+
+    // Set iterptr to current; iterate over blocks until...
+    //  One with proper size is found, and address is returned
+    //  We reach end of heap
+	void* bp;
+    for (bp = current; GET_SIZE(HDRP(bp)) > 0; bp = NEXT_BLKP(bp))
+	{
+		if (!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp))))
+		{
+			return bp;
+		}
+	}
+    
+    // If above failed, we reach this.
+    // Set iterptr to the start of the heap, until...
+    //  One with proper size is found, and address is returned
+    //  We reach current
+	for (bp = heap_listp; bp <= current; bp = NEXT_BLKP(bp))
+	{
+		if (!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp))))
+		{
+			return bp;
+		}
+	}
+    
+    // If both of the above loops failed, return NULL.
+    // There isn't enough adjacent free space in the heap to contain asize.
+    return NULL;
 }
 
 /*
