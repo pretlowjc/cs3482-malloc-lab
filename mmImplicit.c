@@ -330,7 +330,7 @@ static void *coalesce(void *bp)
 	   Note: current is a global variable.
 	*/
 
-    if ((HDRP(bp) < current) && (FTRP(bp) > current)) {
+    if ((HDRP(bp) < current) && (FTRP(bp) >= current)) {
         current = bp;
     }
 
@@ -423,9 +423,8 @@ static void *best_fit(size_t asize)
 		{
             if (smallest == NULL) {
                 smallest = bp;
-                continue;
             }
-			if (GET_SIZE(smallest) > GET_SIZE(bp)) {
+			if (GET_SIZE(HDRP(smallest)) > GET_SIZE(HDRP(bp))) {
                 smallest = bp;
             }
 		}

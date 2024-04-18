@@ -48,24 +48,25 @@ int main(int argc, char * argv[])
    void *bp1, *bp2, *bp3, *bp4;
    void *bp_firstfit, *bp_bestfit, *bp_nextfit, *bp_current;
 
-   bp_firstfit = mm_malloc(0x120);
-   bp1 = mm_malloc(0x320);
-   bp_bestfit = mm_malloc(0x100);
+   bp_firstfit = mm_malloc(0x90);
+   bp1 = mm_malloc(0x300);
+   bp_bestfit = mm_malloc(0x80);
    bp2 = mm_malloc(0x628);
-   bp_current = mm_malloc(0x18);
-   bp3 = mm_malloc(0x320);
-   bp_nextfit = mm_malloc(0x128);
+   bp_current = mm_malloc(0x180);
+   bp3 = mm_malloc(0x388);
+   bp_nextfit = mm_malloc(0x88);
+   
    // Remaining space on heap = 8
 
    mm_free(bp_firstfit);
    mm_free(bp_bestfit);
    mm_free(bp_nextfit);
    mm_free(bp_current);
+   bp_current = mm_malloc(0x178);
 
    printBlocks();
 
-   bp4 = mm_malloc(0x98);
-    
+   bp4 = mm_malloc(0x70);
 
    //firstfit will pick the very first free block that is big enough.
    //The one pointed to by bp_firstfit is big enough.
@@ -80,10 +81,9 @@ int main(int argc, char * argv[])
    //You'll also need to test best fit
    if (whichfit == BESTFIT) addressCompare(bp_bestfit, bp4);
 
-   printBlocks();
-
    void *bp5;
-   bp5 = mm_malloc(0x98);
+   bp5 = mm_malloc(0x70);
+   printBlocks();
    
    if (whichfit == FIRSTFIT) addressCompare(bp_bestfit, bp5);
    if (whichfit == NEXTFIT)  addressCompare(bp_firstfit, bp5);
