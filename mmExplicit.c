@@ -306,7 +306,6 @@ static void insertInFront(void * bp)
     // Indicate that BP is the head of the list.
     // Set bp->successor to the current first block.
     // 
-    printf("Called insertInFront.\n");
     PUT(PRED(bp), (unsigned int)0);
     PUT(SUCC(bp), (unsigned int)firstFree);
     
@@ -321,7 +320,6 @@ static void insertInFront(void * bp)
     if (lastFree == 0) {
         lastFree = firstFree;
     }
-    printBlocks();
 }
 
 
@@ -486,49 +484,21 @@ static void removeBlock(void * bp)
    //
    //You may also need to change firstFree and/or lastFree.
     
-    printf("Called removeBlock.\n");
-
-    if (GET(PRED(bp)) == 0) {
-        if (GET(SUCC(bp)) == 0) {
-            // if PRED(bp) == 0
-            // && SUCC(bp) == 0
-            // bp is only element in the list.
-            firstFree = 0;
-            lastFree = 0;
-        }
-        else {
-            // if PRED(bp) == 0
-            // && SUCC(bp) != 0
-            // start of the list.
-            PUT(PRED(SUCC(bp)), (unsigned int)0);
-            firstFree = SUCC(bp);
-        }
+    
+    char * previousElement = (char *)GET(PRED(bp));
+    char * nextElement = (char *)GET(SUCC(bp));
+    if (previousElement) {
+        PUT(SUCC(previousElement), (unsigned int)nextElement);
     }
     else {
-        if (GET(SUCC(bp)) != 0) {
-            // if SUCC(bp) != 0
-            // && PRED(bp) != 0
-            // middle of the list.
-            char * previousElement = PRED(bp);
-            char * nextElement = SUCC(bp);
-
-            PUT(SUCC(previousElement), (unsigned int)nextElement);
-            PUT(PRED(nextElement), (unsigned int)previousElement);
-            
-            /*
-            PUT(PRED(SUCC(bp)), (unsigned int)GET(PRED(bp)));
-            PUT(SUCC(previousElement), (unsigned int)GET(SUCC(bp)));
-            */
-        }
-        else {
-            // if SUCC(bp) == 0
-            // && PRED(bp) != 0
-            // end of the list.
-            PUT(SUCC(PRED(bp)), (unsigned int)0);
-            lastFree = PRED(bp);
-        }
+        firstFree = nextElement;
     }
-    printBlocks();
+    if (nextElement) {
+        PUT(PRED(nextElement), (unsigned int)previousElement);
+    }
+    else {
+        lastFree = previousElement;  
+    }
 }
 
 /*
