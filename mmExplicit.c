@@ -306,25 +306,22 @@ static void insertInFront(void * bp)
     // Indicate that BP is the head of the list.
     // Set bp->successor to the current first block.
     // 
+    printf("Called insertInFront.\n");
     PUT(PRED(bp), (unsigned int)0);
-    PUT(SUCC(bp), (unsigned int)heap_listp);
+    PUT(SUCC(bp), (unsigned int)firstFree);
     
     // Change PRED of old first block to bp
-    PUT(PRED(heap_listp), (unsigned int)bp);
+    if (firstFree != 0) {
+        PUT(PRED(firstFree), (unsigned int)bp);
+    }
 
     // Since there is now a free block at the front,
     firstFree = bp;
-
-    // If lastFree is NULL,
-    if (lastFree == NULL) {
-        lastFree = bp;
-    }
     
-    //TODO
-   //Insert the block pointed to by bp in the front of
-   //the explicit list.
-   //
-   //Macros defined at the top of the file are very helpful.
+    if (lastFree == 0) {
+        lastFree = firstFree;
+    }
+    printBlocks();
 }
 
 
@@ -489,6 +486,7 @@ static void removeBlock(void * bp)
    //
    //You may also need to change firstFree and/or lastFree.
     
+    printf("Called removeBlock.\n");
 
     if (SUCC(bp) != 0) {
         
@@ -503,6 +501,7 @@ static void removeBlock(void * bp)
         // This is the start of the list.
         else {
             PUT(PRED(SUCC(bp)), (unsigned int)0);
+            firstFree = SUCC(bp);
         }
     }
     else {
@@ -510,73 +509,14 @@ static void removeBlock(void * bp)
         // This is the end of the list.
         if (PRED(bp) != 0) {
             PUT(SUCC(PRED(bp)), (unsigned int)0);
+            lastFree = SUCC(bp);
         }
         // Both are NULL. Should never happen?
         else {
             return;
         }
     }
-    
-
-    // Helper var for next two blocks.
-    char * currentBlock;
-
-    // If bp was firstFree, update its value.
-    if (bp == firstFree) {
-        currentBlock = heap_listp;
-
-        // While the current block is allocated, move to the next block (if exists)
-        while (GET_ALLOC(HDRP(currentBlock))) {
-            if (SUCC(currentBlock) != 0) {
-                currentBlock = SUCC(currentBlock);
-            }
-            // We've reached the end; there is no first free block.
-            else {
-                currentBlock = 0;
-                break;
-            }
-        }
-        firstFree = currentBlock;
-    }
-
-    // If bp was lastFree, update its value.
-    if (bp == lastFree) {
-
-        // The first eligible block is the one before bp.
-        currentBlock = bp;
-        if (PRED(currentBlock) == 0) {
-            lastFree = 0;
-        }
-        // If there is a PRED(bp);
-        else {
-            // While currentBlock is not the start of the list;
-            while (currentBlock != heap_listp) {
-                if (!GET_ALLOC(HDRP(currentBlock))) {
-                    lastFree = currentBlock;
-                    break;
-                }
-
-                currentBlock = PRED(currentBlock);
-            }
-            if (currentBlock == heap_listp) {
-                lastFree = firstFree;
-            }
-        }
-        /*currentBlock = heap_listp;
-
-        // While we're not at the end of the list;
-        while (SUCC(currentBlock) != 0) {
-            // Go to the next block.
-            currentBlock = SUCC(currentBlock);
-            
-            // If this block is free, set lastFree to it.
-            if (!GET_ALLOC(HDRP(currentBlock))) {
-                lastFree = currentBlock;
-            }
-        }*/
-    }
-
-    return;
+    printBlocks();
 }
 
 /*
