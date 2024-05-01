@@ -365,8 +365,39 @@ static void *coalesce(void *bp)
    //Also take a look at the implicit list code.
    //removeBlock function is very helpful here.
    //Macros defined at the top of the file are also very helpful.
+   size_t prev_alloc = GET_ALLOC(FTRP(PREV_BLKP(bp)));
+   size_t next_alloc = GET_ALLOC(HDRP(NEXT_BLKP(bp)));
+   size_t size = GET_SIZE(HDRP(bp));
    
+   // NOTE: In the slides it states the following:
+   // Some extra space for the links (2 extra words
+   // needed for each block)
+   //
+   // This may be important?? - Justin
+   
+   // case 1: Insert the freed block at the root of the list.
+   if (prev_alloc && next_alloc
+   {
+   
+   }
+   // case 2: Splice out the succ block, coalesce both memory
+   // blocks and insert the new block at the root of the list.
+   else if (prev_alloc && !next_alloc)
+   {
 
+   }
+   // case 3: Splice out the pred block, coalesce both memory 
+   // blocks, and insert the new block at the root of the list.
+   else if (!prev_alloc && next_alloc)
+   {
+
+   }
+   // case 4: Splice out pred and succ blocks, coalesce all 3 memory
+   // blocks and insert the new block at the root of the list.    
+   else
+   {
+       
+   }
    //If you implement next_fit for extra credit then check to see if
    //current needs to be modified
 
