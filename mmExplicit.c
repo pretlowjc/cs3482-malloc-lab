@@ -397,10 +397,10 @@ static void *coalesce(void *bp)
    else if (!prev_alloc && next_alloc)
    {
       size += GET_SIZE(HDRP(PREV_BLKP(bp)));
-      bp = PREV_BLKP(bp);
       PUT(HDRP(bp), PACK(size, 0));
       PUT(FTRP(bp), PACK(size, 0));
       removeBlock(PREV_BLKP(bp));
+      bp = PREV_BLKP(bp);
    }
    // case 4: Splice out pred and succ blocks, coalesce all 3 memory
    // blocks and insert the new block at the root of the list.
@@ -411,8 +411,8 @@ static void *coalesce(void *bp)
       removeBlock(NEXT_BLKP(bp));
       PUT(HDRP(PREV_BLKP(bp)), PACK(size, 0));
       PUT(FTRP(NEXT_BLKP(bp)), PACK(size, 0));
-      bp = PREV_BLKP(bp);
       removeBlock(PREV_BLKP(bp));
+      bp = PREV_BLKP(bp);
    }
    // If you implement next_fit for extra credit then check to see if
    // current needs to be modified
