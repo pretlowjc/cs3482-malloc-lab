@@ -378,6 +378,11 @@ static void *coalesce(void *bp)
    //
    // This may be important?? - Justin
 
+   // From Norris' email:
+   // In the cases where the previous block is free, you need to remove
+   // it from the free list because the coalesced block that ends up on
+   // the list needs to begin with that block.
+
    // case 1: Insert the freed block at the root of the list.
    if (prev_alloc && next_alloc)
    {
@@ -397,10 +402,12 @@ static void *coalesce(void *bp)
    else if (!prev_alloc && next_alloc)
    {
       size += GET_SIZE(HDRP(PREV_BLKP(bp)));
+      removeBlock(PREV_BLKP(bp));
+      removeBlock(bp);
+      bp = PREV_BLKP(bp);
       PUT(HDRP(bp), PACK(size, 0));
       PUT(FTRP(bp), PACK(size, 0));
-      removeBlock(PREV_BLKP(bp));
-      bp = PREV_BLKP(bp);
+      insertInFront(bp);
    }
    // case 4: Splice out pred and succ blocks, coalesce all 3 memory
    // blocks and insert the new block at the root of the list.
@@ -408,16 +415,16 @@ static void *coalesce(void *bp)
    {
 
       size += GET_SIZE(HDRP(PREV_BLKP(bp))) + GET_SIZE(FTRP(NEXT_BLKP(bp)));
-      removeBlock(NEXT_BLKP(bp));
-      PUT(HDRP(PREV_BLKP(bp)), PACK(size, 0));
-      PUT(FTRP(NEXT_BLKP(bp)), PACK(size, 0));
       removeBlock(PREV_BLKP(bp));
+      removeBlock(bp);
+      removeBlock(NEXT_BLKP(bp));
       bp = PREV_BLKP(bp);
+      PUT(HDRP(bp), PACK(size, 0));
+      PUT(FTRP(bp), PACK(size, 0));
+      insertInFront(bp);
    }
    // If you implement next_fit for extra credit then check to see if
    // current needs to be modified
-   insertInFront(bp);
-
    return bp;
 }
 
